@@ -13,12 +13,19 @@ $user = $_SESSION['user'];
 // Display the dashboard content
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
     <title>Add Pet Form</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Add jQuery library -->
 
-function getLocation() {
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+    <script>
+        function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
             } else {
@@ -36,7 +43,7 @@ function getLocation() {
             document.getElementById("longitude").value = longitude;
 
             // Submit the form
-            document.getElementById("registrationForm").submit();
+            document.getElementById("reportCaseForm").submit();
         }
 
         function showError(error) {
@@ -54,20 +61,16 @@ function getLocation() {
                     // An unknown error occurred
                     break;
             }
-        }    
+        }
     </script>
-    <!-- Add jQuery library -->
-
-    <!-- Add Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 </head>
+
 <body>
     <div class="container">
         <h1>Report Case Form</h1>
         <form method="POST" action="process_addBiteCase.php" id="reportCaseForm">
             <div class="mb-3">
-                <label for="petname" class="form-label">Victims Name:</label>
+                <label for="vicName" class="form-label">Victim's Name:</label>
                 <input type="text" class="form-control" name="name" id="vicName" required>
             </div>
             <div class="mb-3">
@@ -94,11 +97,12 @@ function getLocation() {
             <input type="hidden" name="latitude" id="latitude">
             <input type="hidden" name="longitude" id="longitude">
 
-            <input onclick="getLocation() "type="submit" value="Add Pet" class="btn btn-primary">
+            <input type="button" onclick="getLocation()" value="Add Pet" class="btn btn-primary">
         </form>
     </div>
 
     <!-- Add Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

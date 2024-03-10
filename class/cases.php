@@ -134,6 +134,102 @@ public function updateBiteCaseStatus($caseID, $caseStatus){
         $stmt->close();
     }
 }
+public function getAllNewDeathCase($brgyID) {
+    global $conn;
 
+    $query = "SELECT c.*, p.* FROM `case` c JOIN pet p ON c.petID = p.petID WHERE c.caseStatus = 0 AND c.caseType = 1 AND c.barangayID = ?;";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $brgyID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if (!$result) {
+        return false; // Return false if the query fails
+    }
+
+    return $result;
+}
+
+public function getAllValidDeathCase($brgyID) {
+    global $conn;
+
+    $query = "SELECT c.*, p.* FROM `case` c JOIN pet p ON c.petID = p.petID WHERE c.caseStatus = 1 AND c.caseType = 1 AND c.barangayID = ?;";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $brgyID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if (!$result) {
+        return false; // Return false if the query fails
+    }
+
+    return $result;
+}
+
+public function getAllRejectedDeathCase($brgyID) {
+    global $conn;
+
+    $query = "SELECT c.*, p.* FROM `case` c JOIN pet p ON c.petID = p.petID WHERE c.caseStatus = 2 AND c.caseType = 1 AND c.barangayID = ?;";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $brgyID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if (!$result) {
+        return false; // Return false if the query fails
+    }
+
+    return $result;
+}
+
+
+
+public function updateDeathCaseStatus($caseID, $caseStatus){
+global $conn;
+
+$stmt = $conn->prepare("UPDATE `case` SET caseStatus = ?  WHERE caseID = ?");
+$stmt->bind_param("ii", $caseStatus, $caseID);
+
+try {
+    if ($stmt->execute()) {
+        // Update successful
+        return true;
+    } else {
+        // Failed to update user status
+        return "Failed to update user status: " . $stmt->error;
+    }
+} catch (Exception $e) {
+    // Handle the exception
+    return "Failed to update user status: " . $e->getMessage();
+} finally {
+    $stmt->close();
+}
+}
+public function addDeathCase($residentID, $brgyID, $petName, $geoID, $caseType, $currentDate) {
+    global $conn;
+    try {
+        $petID = $this->getPetIDByName($petName);
+
+        if (!$petID ==true) {
+            return "Pet or owner not found in the database.";
+        }
+
+        $stmt = $conn->prepare("INSERT INTO `case` (residentID, barangayID, petID, caseGeoID, caseType, date)
+        VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("iiiiis", $residentID, $brgyID, $petID, $geoID, $caseType, $currentDate);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            $stmt->close();
+            return true; // Case added successfully
+        } else {
+            $stmt->close();
+            return "Failed to add the case to the database.";
+        }
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+        return false;
+    }
+}
 }
 ?>

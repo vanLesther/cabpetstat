@@ -10,7 +10,7 @@ if (!isset($_SESSION['user'])) {
 }
 
 $brgyID = isset($_SESSION['user']['brgyID']) ? $_SESSION['user']['brgyID'] : '';
-
+$residentID = isset($_SESSION['user']['residentID']) ? $_SESSION['user']['residentID'] : '';
 // Get the user's information from the session
 $user = $_SESSION['user'];
 ?>
@@ -48,8 +48,8 @@ $user = $_SESSION['user'];
 
 <body>
     <div class="container">
-        <h1><i class="bi bi-journal"></i> Report Bite Case Form</h1>
-        <form method="POST" action="process_addBiteCase.php" id="reportCaseForm">
+        <h1><i class="bi bi-journal"></i> Report Death Case Form</h1>
+        <form method="POST" action="process_addDeathCase.php" id="reportCaseForm">
             <div class="mb-3">
                 <label for="petName" class="form-label">Pet Name:</label>
                 <select class="form-select" name="petName" id="petName" required>
@@ -61,9 +61,9 @@ $user = $_SESSION['user'];
                         die("Connection failed: " . $conn->connect_error);
                     }
 
-                    $sql = "SELECT pname FROM `pet` NATURAL JOIN resident WHERE brgyID =? ";
+                    $sql = "SELECT pname FROM pet  WHERE residentID=? AND status =1";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("i", $brgyID);
+                    $stmt->bind_param("i", $residentID);
                     $stmt->execute();
                     $result = $stmt->get_result();
 
@@ -77,23 +77,14 @@ $user = $_SESSION['user'];
                     ?>
                 </select>
             </div>
-            <div class="mb-3">
-                <label for="victimsName" class="form-label">Victim Name:</label>
-                <input type="text" class="form-control" name="victimsName" id="victimsName" required>
-            </div>
-            <div class="mb-3">
-                <label for="description" class="form-label">Description:</label>
-                <input type="text" class="form-control" name="description" id="description" required>
-            </div>
             <input type="hidden" name="residentID" id="residentID" value="<?php echo $user['residentID']; ?>">
             <input type="hidden" name="brgyID" id="brgyID" value="<?php echo $user['brgyID']; ?>">
-            <input type="hidden" name="caseType" id="caseType" value="0">
+            <input type="hidden" name="caseType" id="caseType" value="1">
             <input type="hidden" name="latitude" id="latitude">
             <input type="hidden" name="longitude" id="longitude">
-            <button type="button" class="btn btn-primary" onclick="getLocation()">Add Bite Case</button>
+            <input type="submit" value="Add Death Case" class="btn btn-primary" btn-lg onclick="getLocation()">
         </form>
     </div>
-
     <script>
         function getLocation() {
             if (navigator.geolocation) {
@@ -131,6 +122,7 @@ $user = $_SESSION['user'];
             }
         }
     </script>
+    <!-- Add Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 

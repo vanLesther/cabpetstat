@@ -5,24 +5,20 @@ class Pet {
     private $conn;
 
 
-    public function addPet($residentID, $petType, $name, $sex, $color) {
+    public function addPet($residentID, $petType, $name, $sex, $color, $currentDate) {
         global $conn;
         try {
-            $stmt = $conn->prepare("INSERT INTO pet (residentID, petType, pname, sex, color)
-                                         VALUES (?, ?, ?, ?, ?)");
-            $stmt->bind_param("iisss", $residentID, $petType, $name, $sex, $color);
+            $stmt = $conn->prepare("INSERT INTO pet (residentID, petType, pname, sex, color, petDate)
+                                         VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("iissss", $residentID, $petType, $name, $sex, $color, $currentDate);
             $stmt->execute();
     
-            // Check if the insertion was successful
             if ($stmt->affected_rows > 0) {
-                // Pet added successfully
-                $petID = $stmt->insert_id;
                 $stmt->close();
-                return true;
+                return true; // Case added successfully
             } else {
-                // Failed to add pet
                 $stmt->close();
-                return false;
+                return "Failed to add the case to the database.";
             }
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();

@@ -35,14 +35,74 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
     <title>Dashboard 1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #004643;
+            color: #fffffe;
+        }
+
+        .a {
+            color:#fffffe;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .tab-content {
+            background-color: #e8e4e6;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .nav-link {
+            color: #007bff;
+        }
+
+        .nav-link.active {
+            color: #ffffff;
+            background-color: #007bff;
+        }
+
+        .btn-view {
+            background-color: #17a2b8;
+            color: #ffffff;
+        }
+
+        .btn-accept {
+            background-color: #28a745;
+            color: #ffffff;
+        }
+
+        .btn-reject {
+            background-color: #dc3545;
+            color: #ffffff;
+        }
+
+        .btn-manage {
+            margin-top: 10px;
+            background-color: #f9bc60;
+            color: #001e1d;
+            border-color: #f9bc60;
+        }
+
+        .btn-manage:hover {
+            background-color: #e16162;
+            border-color: #e16162;
+        }
+    </style>
 </head>
+
 <body>
     <div class="container">
-    <h1>Manage Pets for Barangay: <?php echo($result)?></h1>
+        <h1 class="text-center">Manage Pets for Barangay: <?php echo $result ?></h1>
         <!-- Navigation Tabs -->
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -55,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <a class="nav-link" href="#rejectedResidents" data-bs-toggle="tab">Rejected Residents</a>
             </li>
         </ul>
-        
+
         <!-- Tab Content -->
         <div class="tab-content">
             <!-- New Residents -->
@@ -81,14 +141,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             echo '<td>
                                      <form method="post" action="proccess_viewResidentLocation.php">
                                         <input type="hidden" name="userID" value="' . $row['residentID'] . '">
-                                        <button type="submit" name="accept" class="btn btn-success">View Location</button>
+                                        <button type="submit" name="accept" class="btn btn-view">View Location</button>
                                     </form>
                              </td>';
                             echo '<td>
                                     <form method="post" action="dashboard1.php">
                                         <input type="hidden" name="userID" value="' . $row['residentID'] . '">
-                                        <button type="submit" name="accept" class="btn btn-success">Accept</button>
-                                        <button type="submit" name="reject" class="btn btn-danger">Reject</button>
+                                        <button type="submit" name="accept" class="btn btn-accept">Accept</button>
+                                        <button type="submit" name="reject" class="btn btn-reject">Reject</button>
                                     </form>
                                 </td>';
                             echo '</tr>';
@@ -97,7 +157,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Valid Residents -->
             <div class="tab-pane fade" id="validResidents">
                 <table class="table">
@@ -122,7 +182,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Rejected Residents -->
             <div class="tab-pane fade" id="rejectedResidents">
                 <table class="table">
@@ -147,13 +207,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </tbody>
                 </table>
             </div>
-            <a href="dashboard1pet.php" class="btn btn-primary">Manage Pet</a>
-            <a href="reportCase.php" class="btn btn-primary">Report Case</a>
-            <a href="dashboardBiteCases.php" class="btn btn-primary">Manage Bite Cases</a>
-            <a href="logout.php" class="btn btn-primary">Logout</a>
+            <a href="dashboard1pet.php" class="btn btn-manage">Manage Pet</a>
+            <a href="dashboardBiteCases.php" class="btn btn-manage">Manage Bite Cases</a>
+            <a href="dashboardDeathCases.php" class="btn btn-manage">Manage Death Cases</a>
+            <a href="logout.php" class="btn btn-manage">Logout</a>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

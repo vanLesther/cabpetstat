@@ -14,14 +14,14 @@ $brgyID = isset($_SESSION['user']['brgyID']) ? $_SESSION['user']['brgyID'] : '';
 $barangay = new Barangay();
 $result1 = $barangay->getBrgyName($brgyID);
 
-// Handle form submission
+// Handle form submission1
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (isset($_POST["verify"]) || isset($_POST["reject"])) {
         $caseID = $_POST["caseID"];
         $caseStatus = isset($_POST["verify"]) ? 1 : 2; // 1 for verified, 2 for not verified
 
         $case = new Cases();
-        $result = $case->updateBiteCaseStatus($caseID, $caseStatus);
+        $result = $case->updateDeathCaseStatus($caseID, $caseStatus);
 
         if ($result === true) {
             // Successfully updated pet status
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html lang="en">
 
 <head>
-    <title>Dashboard 2</title>
+    <title>Manage Death Cases</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
         body {
@@ -84,29 +84,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <body>
     <div class="container">
-        <h1 class="text-center">Manage Bite Cases for Barangay: <?php echo $result1 ?></h1>
+        <h1 class="text-center">Manage Death Cases for Barangay: <?php echo $result1 ?></h1>
         <!-- Navigation Tabs -->
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link active" href="#newBiteCase" data-bs-toggle="tab">New Bite Cases</a>
+                <a class="nav-link active" href="#newDeathCase" data-bs-toggle="tab">New Death Cases</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#validBiteCase" data-bs-toggle="tab">Valid Bite Cases</a>
+                <a class="nav-link" href="#validDeathCase" data-bs-toggle="tab">Valid Death Cases</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#rejectedBiteCase" data-bs-toggle="tab">Rejected Bite Cases</a>
+                <a class="nav-link" href="#rejectedDeathCase" data-bs-toggle="tab">Rejected Death Cases</a>
             </li>
         </ul>
 
         <!-- Tab Content -->
         <div class="tab-content">
             <!-- New Bite Cases Tab -->
-            <div class="tab-pane fade show active" id="newBiteCase">
+            <div class="tab-pane fade show active" id="newDeathCase">
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Pet Name</th>
-                            <th>Victim's Name</th>
                             <th>Date</th>
                             <th>Status</th>
                         </tr>
@@ -114,13 +113,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <tbody>
                         <?php
                         $case = new Cases();
-                        $cases = $case->getAllNewBiteCase($brgyID);
+                        $cases = $case->getAllNewDeathCase($brgyID);
 
                         while ($row = $cases->fetch_assoc()) {
                             echo '<tr>';
                             echo '<td>' . $row['pname'] . '</td>';
-                            echo '<td>' . $row['victimsName'] . '</td>';
-                            // Input date as a string
                             $input_date = $row['date'];
 
                             // Convert the input date to a DateTime object
@@ -132,7 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             // Print the formatted date
                             echo '<td>' . $formatted_date . '</td>';
                             echo '<td>
-                                    <form method="post" action="dashboardBiteCases.php">
+                                    <form method="post" action="dashboardDeathCases.php">
                                         <input type="hidden" name="caseID" value="' . $row['caseID'] . '">
                                         <button type="submit" name="verify" class="btn btn-accept">Accept</button>
                                         <button type="submit" name="reject" class="btn btn-reject">Reject</button>
@@ -145,24 +142,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </table>
             </div>
             <!-- Valid Bite Cases Tab -->
-            <div class="tab-pane fade" id="validBiteCase">
+            <div class="tab-pane fade" id="validDeathCase">
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Pet Name</th>
-                            <th>Victim's Name</th>
                             <th>Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
                         $case = new Cases();
-                        $cases = $case->getAllValidBiteCase($brgyID);
+                        $cases = $case->getAllValidDeathCase($brgyID);
 
                         while ($row = $cases->fetch_assoc()) {
                             echo '<tr>';
                             echo '<td>' . $row['pname'] . '</td>';
-                            echo '<td>' . $row['victimsName'] . '</td>';
                             // Input date as a string
                             $input_date = $row['date'];
 
@@ -181,24 +176,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </table>
             </div>
             <!-- Rejected Bite Cases Tab -->
-            <div class="tab-pane fade" id="rejectedBiteCase">
+            <div class="tab-pane fade" id="rejectedDeathCase">
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Pet Name</th>
-                            <th>Victim's Name</th>
                             <th>Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
                         $case = new Cases();
-                        $cases = $case->getAllRejectedBiteCase($brgyID);
+                        $cases = $case->getAllRejectedDeathCase($brgyID);
 
                         while ($row = $cases->fetch_assoc()) {
                             echo '<tr>';
                             echo '<td>' . $row['pname'] . '</td>';
-                            echo '<td>' . $row['victimsName'] . '</td>';
                             $input_date = $row['date'];
 
                             // Convert the input date to a DateTime object

@@ -19,8 +19,10 @@ $pets = $pet->getPetsByResidentID($user['residentID']);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pet Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
@@ -42,17 +44,17 @@ $pets = $pet->getPetsByResidentID($user['residentID']);
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container mt-4">
         <h1>Welcome, <?php echo isset($user['name']) ? $user['name'] : ''; ?>!</h1>
         <p>Email: <?php echo isset($user['email']) ? $user['email'] : ''; ?></p>
     </div>
 
-    <div class="container">
+    <div class="container mt-4">
         <h2>Add Pet</h2>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPetModal">Add Pet</button>
     </div>
 
-    <div class="container">
+    <div class="container mt-4">
         <h2>My Pets</h2>
         <table class="table">
             <thead>
@@ -72,12 +74,12 @@ $pets = $pet->getPetsByResidentID($user['residentID']);
                         <td><?php echo ($pet['sex'] == 0) ? 'Male' : 'Female'; ?></td>
                         <td><?php echo $pet['color']; ?></td>
                         <td>
-    <?php if ($pet['status'] == 0) { ?>
-        <i class="bi bi-x-circle text-danger"></i> Not Verified
-    <?php } else { ?>
-        <i class="bi bi-check-circle text-success"></i> Verified
-    <?php } ?>
-</td>
+                            <?php if ($pet['status'] == 0) { ?>
+                                <i class="bi bi-x-circle text-danger"></i> Not Verified
+                            <?php } else { ?>
+                                <i class="bi bi-check-circle text-success"></i> Verified
+                            <?php } ?>
+                        </td>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -86,7 +88,7 @@ $pets = $pet->getPetsByResidentID($user['residentID']);
 
     <!-- Add Pet Modal -->
     <div class="modal fade" id="addPetModal" tabindex="-1" aria-labelledby="addPetModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addPetModalLabel">Add Pet</h5>
@@ -129,6 +131,11 @@ $pets = $pet->getPetsByResidentID($user['residentID']);
         </div>
     </div>
     <div class="container">
+        <h2>Add Bite Case</h2>
+        <a href="addBiteCase.php" class="btn btn-primary">Add Bite Cases</a>
+    </div>
+
+    <div class="container mt-4">
         <h2>Add Bite Case</h2>
         <a href="addBiteCase.php" class="btn btn-primary">Add Bite Cases</a>
     </div>

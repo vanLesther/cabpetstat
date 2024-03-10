@@ -9,10 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $residentID = $_POST['residentID'];
     $petName = $_POST['petName'];
     $brgyID = $_POST['brgyID'];
-    // $ownerName = $_POST['ownerName'];
-    $victimsName = isset($_POST['victimsName']) ? $_POST['victimsName'] : ''; // Check if 'victimName' is set
     $caseType = $_POST['caseType'];
-    $description = $_POST['description'];
     $latitude = $_POST['latitude'];
     $longitude = $_POST['longitude'];
 
@@ -25,10 +22,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Replace 'date' with the current date and time using the date function
         $currentDate = date('Y-m-d H:i:s');
         //var_dump($currentDate); // Add this line to check the value
-        $result = $case->addBiteCase($residentID, $brgyID, $petName, $geoID, $victimsName, $caseType, $description, $currentDate);
+        $result = $case->addDeathCase($residentID, $brgyID, $petName, $geoID, $caseType, $currentDate);
         
         if ($result === true) {
-            echo '<script>alert("Report Case Successfully"); window.location.href = "process_addBiteCase.php";</script>';
+            echo '<script>alert("Report Death Case Successfully"); window.location.href = "addDeathCase.php";</script>';
         } else {
             echo '<script>alert("Failed to Report Case: ' . $result . '"); window.location.href = "addBiteCase.php";</script>';
         }

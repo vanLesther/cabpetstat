@@ -10,8 +10,10 @@ $name = $_POST['name'];
 $sex = $_POST['sex'];
 $color = $_POST['color'];
 
+$currentDate = date('Y-m-d H:i:s');
+//  var_dump($currentDate); // Add this line to check the value
 $pet = new Pet();
-$newPet = $pet->addPet($residentID, $petType, $name, $sex, $color);
+$newPet = $pet->addPet($residentID, $petType, $name, $sex, $color, $currentDate);
 
 if ($newPet === true) {
     echo '<script>alert("Register Pet Successfully"); window.location.href = "viewPet.php";</script>';
