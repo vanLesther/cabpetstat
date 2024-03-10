@@ -37,7 +37,29 @@ class Resident {
             return "Registration failed: " . $stmt->error;
         }
     }
+    function createAcc($name, $geoID, $brgyID, $contactNo, $email, $password, $userStatus) {
+        global $conn;
     
+        // Check if email already exists
+        $resident = new Resident();
+        if ($resident->checkEmailExists($email)) {
+            return "Email already registered";
+        }
+    
+        // Hash the password
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    
+        $stmt = $conn->prepare("INSERT INTO resident (name, geoID, brgyID, contactNo, email, password, userStatus) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssiissi", $name, $geoID, $brgyID, $contactNo, $email, $hashedPassword, $userStatus);
+    
+        if ($stmt->execute()) {
+            // Registration successful
+            return true;
+        } else {
+            // Failed to register resident
+            return "Registration failed: " . $stmt->error;
+        }
+    }
     function loginResident($email, $password) {
         global $conn;
         $stmt = $conn->prepare("SELECT * FROM resident WHERE email = ?");
@@ -61,6 +83,7 @@ class Resident {
             return false;
         }
     }
+
 function updateUserStatus($residentID, $status) {
     global $conn;
 
@@ -85,49 +108,66 @@ function updateUserStatus($residentID, $status) {
 public function getAllNewResidents($brgyID) {
     global $conn;
 
+try {
     $query = "SELECT * FROM resident WHERE userStatus = 0 AND brgyID = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $brgyID);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if (!$result) {
-        return false; // Return false if the query fails
-    }
+    $new = $result->fetch_all(MYSQLI_ASSOC);
+    
+    $stmt->close();
+    return $new;
 
-    return $result;
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+        return false;
+    }
 }
 
 public function getAllValidResidents($brgyID) {
     global $conn;
 
-    $query = "SELECT * FROM resident WHERE userStatus = 1 AND brgyID = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $brgyID);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    try {
+        $query = "SELECT * FROM resident WHERE userStatus = 1 AND brgyID = ? ORDER BY name DESC";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $brgyID);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    if (!$result) {
-        return false; // Return false if the query fails
+        $valid = $result->fetch_all(MYSQLI_ASSOC);
+        
+        $stmt->close();
+        return $valid;
+
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+        return false;
     }
-
-    return $result;
 }
+
 public function getAllRejectedResidents($brgyID) {
     global $conn;
 
-    $query = "SELECT * FROM resident WHERE userStatus = 2 AND brgyID = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $brgyID);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    try {
+        $query = "SELECT * FROM resident WHERE userStatus = 2 AND brgyID = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $brgyID);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    if (!$result) {
-        return false; // Return false if the query fails
+        $death = $result->fetch_all(MYSQLI_ASSOC);
+        
+        $stmt->close();
+        return $death;
+
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+        return false;
     }
-
-    return $result;
 }
+
 public function viewResidentLocation($userID) {
     global $conn;
 
@@ -145,5 +185,90 @@ public function viewResidentLocation($userID) {
 
     return $result;
 }
-}  
+
+public function getAllValidResidentByBarangay($brgyID) {
+    global $conn;
+
+    $stmt = $conn->prepare("SELECT * FROM resident WHERE brgyID = ? AND userStatus IN (0, 1)");
+    $stmt->bind_param("i", $brgyID);
+    $stmt->execute();
+
+    return $stmt->get_result(); // Return the result set, not just a single row
+}
+public function getOfficersByBarangay($brgyID) {
+    global $conn;
+
+    $stmt = $conn->prepare("SELECT * FROM resident WHERE brgyID = ? AND userType = 1");
+    $stmt->bind_param("i", $brgyID);
+    $stmt->execute();
+
+    return $stmt->get_result();
+}
+public function isResidentOfficerInBarangay($residentID, $brgyID) {
+    global $conn;
+
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM resident WHERE residentID = ? AND brgyID = ? AND userType = 1");
+    $stmt->bind_param("ii", $residentID, $brgyID);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+
+    return $count > 0;
+}
+public function revokeOfficer($residentID, $brgyID) {
+    global $conn;
+
+    $stmt = $conn->prepare("UPDATE resident SET userType = 0 WHERE brgyID = ? AND residentID = ?");
+    $stmt->bind_param("ii", $brgyID, $residentID); // Change the order of parameters here
+
+    if ($stmt->execute()) {
+        return true; // Successful revocation
+    } else {
+        return false; // Failed revocation
+    }
+}
+public function assignOfficer($residentID, $brgyID) {
+    global $conn;
+
+    $stmt = $conn->prepare("UPDATE resident SET userType = 1, userStatus = 1 WHERE residentID = ? AND brgyID = ?;");
+    $stmt->bind_param("ii", $residentID, $brgyID);
+    
+    if ($stmt->execute()) {
+        return true; // Successful assignment
+    } else {
+        return false; // Failed assignment
+    }
+}
+public function getAllOfficers() {
+    global $conn;
+
+    $stmt = $conn->prepare("SELECT * FROM resident WHERE userType = 1");
+    $stmt->execute();
+
+    return $stmt->get_result();
+
+}
+public function getAccName($residentID){
+    global $conn;
+
+    $stmt = $conn->prepare("SELECT name FROM resident WHERE residentID = ?");
+    $stmt->bind_param("i", $residentID);
+    
+    if ($stmt->execute()) {
+        return true; // Successful assignment
+    } else {
+        return false; // Failed assignment
+    }
+
+}
+public function validResident($query) {
+    global $conn;
+
+    $stmt = $conn->prepare("SELECT * FROM resident WHERE brgyID = ? AND userStatus IN (0, 1)");
+    $stmt->bind_param("i", $query);
+    $stmt->execute();
+
+    return $stmt->get_result(); // Return the result set, not just a single row
+}
+}
 ?>

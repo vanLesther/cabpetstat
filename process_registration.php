@@ -2,6 +2,7 @@
 require_once("class/resident.php");
 require_once("class/geolocation.php");
 require_once("class/barangay.php");
+require_once("class/notification.php");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = $_POST["name"];
@@ -11,7 +12,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $password = $_POST["password"];
     $latitude = $_POST['latitude'];
     $longitude = $_POST['longitude'];
-
+    $notifType = $_POST["notifType"];
+    $notifMessage = $_POST["notifMessage"];
+    
+    $notifDate = date('Y-m-d H:i:s');
     // Create a new instance of the Geolocation class
     $geolocation = new Geolocation();
     $geoID = $geolocation->saveGeolocation($latitude, $longitude);
@@ -32,8 +36,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 echo '<script>alert("Email already registered."); window.location.href = "index.php";</script>';
             } else {
                 // Register the resident
-                $registrationResult = $resident->registerResident($name, $geoID, $brgyID, $contactNo, $email, $password);
-            
+                $notif = new Notification();
+                $notifDate = date('Y-m-d H:i:s');
+                $push = $notif->addResNotif($brgyID, $notifType, $notifDate, $notifMessage);
+                $registrationResult = $resident->registerResident($name, $geoID, $brgyID, $contactNo, $email, $password);  
+
                 if ($registrationResult === true) {
                     echo '<script>alert("Registered Successfully"); window.location.href = "login.php";</script>';
                 } else {
@@ -44,8 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             echo "Failed to get Barangay.";
         }
-    } else {
-        echo "Failed to store location.";
     }
 }
 ?>

@@ -2,22 +2,25 @@
 session_start();
 
 require_once("class/resident.php");
+require_once("class/admin.php");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL); // Sanitize input
+    $email = $_POST["email"];
     $password = $_POST["password"];
 
     $resident = new Resident();
     $user = $resident->loginResident($email, $password);
 
     if ($user !== false) {
-        $_SESSION['user'] = $user; // Store the user array directly
+        $_SESSION['user'] = $user; 
         switch ($user['userType']) {
             case 0:
-                header("Location: dashboard.php");
+                // resident login
+                header("Location: ./dashboard.php?active-tab=1");
                 exit();
             case 1:
-                header("Location: dashboard1.php");
+                // BAO login
+                header("Location: dashboardBAO.php");
                 exit();
             case 2:
                 header("Location: dashboard2.php");
@@ -26,9 +29,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 echo "Invalid userType: " . $user['userType'];
                 exit();
         }
+    } 
+    $admin = new Admin();
+    $admin = $admin->adminLogin($email, $password);
+
+    if ($admin !== false) {
+        $_SESSION['admin'] = $admin; 
+        switch ($admin['userType']) {
+            case 0:
+                header("Location: dashboardMAO.php");
+                exit();
+            default:
+                echo "Invalid userType: " . $admin['userType'];
+                exit();
+        }
     } else {
-        // Redirect with an error message
-        header("Location: login.php?error=invalid");
+        echo '<script>alert("Incorrect email or password!"); window.location.href = "login.php?error=invalid";</script>';
         exit();
     }
 }
