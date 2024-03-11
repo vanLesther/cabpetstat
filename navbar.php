@@ -20,7 +20,7 @@
                 </li>
                 <li class="nav-item">
                     <button type="button" class="btn btn-primary">
-                        <a href="Registration.php" class="nav-link px-2 text-decoration-none">Register</a>
+                        <a href="registration.php" class="nav-link px-2 text-decoration-none">Register</a>
                     </button>
                 </li>
             </ul>
