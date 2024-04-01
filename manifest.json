@@ -1,0 +1,21 @@
+{
+  "name": "PetStat",
+  "short_name": "PetStat",
+  "start_url": "/index.php",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#455A64",
+  "description": "A web app for managing pet data",
+  "icons": [
+    {
+      "src": "petstat.png", 
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "petstat.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
